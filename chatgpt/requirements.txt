@@ -1,0 +1,15 @@
+lint
+black
+pytest
+pytest-cov
+click
+ipython
+ipykernel
+openai
+numpy
+pandas
+tiktoken
+typing
+textract
+langchain
+pinecone-client[grpc]

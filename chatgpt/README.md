@@ -42,3 +42,9 @@ Access your API key in your Python code: In your Python code, you can access you
         import os
         openai_key = os.environ.get('OPENAI_KEY')
         pinecone_key = os.environ.get('PINECONE_KEY')
+
+
+### textract setup:
+   sudo apt-get update
+   apt-get install python-dev libxml2-dev libxslt1-dev antiword unrtf poppler-utils pstotext tesseract-ocr \
+   flac ffmpeg lame libmad0 libsox-fmt-mp3 sox libjpeg-dev swig libpulse-dev

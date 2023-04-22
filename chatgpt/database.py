@@ -2,10 +2,10 @@ import pandas as pd
 import numpy as np
 #import openai
 import pinecone
-from config import INDEX_NAME, PINECONE_KEY, PINECONE_ENV, INDEX_DIM
+from config import INDEX_NAME, PINECONE_KEY, PINECONE_ENV, INDEX_DIM, DISTANCE_METRIC
 
 
-def init_pinecone_index() -> pinecone.GRPCIndex:
+def init_pinecone_index():
     """
     Initializes a Pinecone index and returns a connection to the index.
 
@@ -22,25 +22,40 @@ def init_pinecone_index() -> pinecone.GRPCIndex:
         pinecone.exceptions.ServerNotFoundError: If the Pinecone server cannot be reached.
     """
     # initialize connection to pinecone
+    constants = [PINECONE_KEY,PINECONE_ENV,INDEX_NAME,INDEX_DIM,DISTANCE_METRIC]
+    for cont in constants:
+        if cont == None:
+            return print(f'this config {cont} is empty')
+
     pinecone.init(
         api_key=PINECONE_KEY,
         environment=PINECONE_ENV
     )
 
-    # check if index already exists (it shouldn't if this is first time)
     if INDEX_NAME not in pinecone.list_indexes():
         # if does not exist, create index
         pinecone.create_index(
             INDEX_NAME,
             dimension=INDEX_DIM,
-            metric='dotproduct'
+            metric= DISTANCE_METRIC
         )
 
     # connect to index
     index = pinecone.GRPCIndex(INDEX_NAME)
     return index
+    
+
+if __name__ == "__main__":
+    index = init_pinecone_index()
+    print(type(index))
 
 '''
+## debug
+var = [PINECONE_KEY,PINECONE_ENV,INDEX_NAME,INDEX_DIM]
+for item in var:
+    print(item ,  type(item))
+
+    
 from redis import Redis
 from redis.commands.search.field import VectorField
 from redis.commands.search.field import TextField, NumericField

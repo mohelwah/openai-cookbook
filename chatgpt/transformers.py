@@ -4,9 +4,9 @@ import openai
 import pandas as pd
 import numpy as np
 
-from config import TEXT_EMBEDDING_CHUNK_SIZE, EMBEDDINGS_MODEL
-from database import load_vectors
-
+from config import OPENAI_KEY,TEXT_EMBEDDING_CHUNK_SIZE, EMBEDDINGS_MODEL
+#from database import load_vectors
+openai.api_key = OPENAI_KEY
 def get_col_average_from_list_of_lists(list_of_lists):
     """Return the average of each column in a list of lists."""
     if len(list_of_lists) == 1:
@@ -58,7 +58,7 @@ def chunks(text, n, tokenizer):
 def get_unique_id_for_file_chunk(filename, chunk_index):
     return str(filename+"-!"+str(chunk_index))
 
-def handle_file_string(file,tokenizer,redis_conn, text_embedding_field,index_name):
+def handle_file_string(file,tokenizer):#,redis_conn, text_embedding_field,index_name):
     filename = file[0]
     file_body_string = file[1]
 
@@ -88,10 +88,14 @@ def handle_file_string(file,tokenizer,redis_conn, text_embedding_field,index_nam
                                                               , "file_chunk_index": i}}))
 
     try:
-        load_vectors(redis_conn, vectors,text_embedding_field)
-
+        #load_vectors(redis_conn, vectors,text_embedding_field)
+        return vectors
     except Exception as e:
         print(f'Ran into a problem uploading to Redis: {e}')
+
+
+
+
 
 # Make a class to generate batches for insertion
 class BatchGenerator:

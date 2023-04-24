@@ -79,23 +79,37 @@ def handle_file_string(file,tokenizer):#,redis_conn, text_embedding_field,index_
 
     # Get the vectors array of triples: file_chunk_id, embedding, metadata for each embedding
     # Metadata is a dict with keys: filename, file_chunk_index
-    vectors = []
+    ids = []
+    embeds = []
+    metadata = []
+    
     for i, (text_chunk, embedding) in enumerate(text_embeddings):
-        id = get_unique_id_for_file_chunk(filename, i)
-        vectors.append(({'id': id
-                         , "vector": embedding, 'metadata': {"filename": filename
-                                                              , "text_chunk": text_chunk
-                                                              , "file_chunk_index": i}}))
-
+        ids.append(get_unique_id_for_file_chunk(filename, i))
+        embeds.append(embedding)
+        metadata.append(
+            {
+                "filename": filename, "text_chunk": text_chunk, "file_chunk_index": i
+            }
+        )
     try:
         #load_vectors(redis_conn, vectors,text_embedding_field)
+        vectors = list(zip(ids, embeds, metadata))
         return vectors
     except Exception as e:
         print(f'Ran into a problem uploading to Redis: {e}')
 
-
-
-
+'''
+meta_batch = chunks[i:i_end]
+ids_batch = [x['id'] for x in meta_batch]
+texts = [x['text'] for x in meta_batch]
+embeds = [record['embedding'] for record in res['data']]
+meta_batch = [{
+    'text': x['text'],
+    'chunk': x['chunk'],
+    'url': x['url']
+} for x in meta_batch]
+to_upsert = list(zip(ids_batch, embeds, meta_batch))
+'''
 
 # Make a class to generate batches for insertion
 class BatchGenerator:
